@@ -1,0 +1,52 @@
+{
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      // Root
+      "@/*": ["./src/*"],
+      // Assets
+      "@/assets/*": ["./public/assets/*"],
+      // Routes
+      "@/routes/*": ["./src/app/(pages)/*"],
+      // Components
+      "@/atoms/*": ["./src/app/components/atoms/*"],
+      "@/molecules/*": ["./src/app/components/molecules/*"],
+      "@/organisms/*": ["./src/app/components/organisms/*"],
+      "@/pages/*": ["./src/app/components/pages/*"],
+      "@/templates/*": ["./src/app/components/templates/*"],
+      // Api
+      "@/api/*": ["./src/app/api/*"],
+      // Features
+      "@/features/*": ["./src/app/features/*"],
+      // Providers
+      "@/providers/*": ["./src/app/providers/*"],
+      // Store
+      "@/store/*": ["./src/app/store/*"],
+      // Types
+      "@/types/*": ["./src/app/types/*"],
+      // Utils
+      "@/utils/*": ["./src/app/utils/*"]
+    },
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "types": ["reflect-metadata"]
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
