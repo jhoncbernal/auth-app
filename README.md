@@ -165,7 +165,7 @@ Ctl + c
 
 ### Deployed app
 
-![Pelmorex](http://77.237.232.197:1234/login)
+[Pelmorex App Auth](http://77.237.232.197:1234/login)
 
 
 ## Conclusion
