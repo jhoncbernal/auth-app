@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  next:
+    container_name: ${DOCKER_PREFIX_NAME}-${DOCKER_PREFIX_ENV}-app
+    image: ${DOCKER_PREFIX_NAME}/${DOCKER_PREFIX_NAME}-${DOCKER_PREFIX_ENV}-app:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - ${EXPOSE_APP_PORT}:${EXPOSE_APP_PORT}
+    networks:
+      - npm
+    command: sh -c 'pnpm prisma && pnpm start'
+
+networks:
+  npm:
+    external: true
