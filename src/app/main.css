@@ -1,0 +1,40 @@
+@layer tailwind-base, primereact, tailwind-utilities;
+
+@import url("https://unpkg.com/leaflet@1.9.4/dist/leaflet.css");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css");
+
+@layer tailwind-base {
+  @tailwind base;
+}
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
+}
+
+:root {
+  --font-family: var(--font-poppins) !important;
+}
+
+.custom-tooltip.leaflet-tooltip {
+  padding: 0px !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.custom-tooltip.leaflet-tooltip-top:before {
+  border-top-color: black !important;
+}
+
+.custom-tooltip.leaflet-tooltip-bottom:before {
+  border-bottom-color: black !important;
+}
+
+.leaflet-draw-actions a {
+  color: white !important;
+}
+
+.leaflet-corner-icon {
+  border-radius: 50% !important;
+}
