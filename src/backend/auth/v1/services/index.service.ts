@@ -54,7 +54,7 @@ export class IndexService implements IService {
     const templateDictionary = {
       verifyEmail: {
         title: "Pelmorex - Confirm email",
-        template: "d-da56921ae10f432e8da3857ff324cdc9",
+        template: SENDGRID.TEMPLATES.WELCOME.ID,
         path: "/api/auth/email/verify",
       },
       recoverPassword: {
