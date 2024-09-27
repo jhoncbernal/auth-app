@@ -1,0 +1,19 @@
+deployments:
+  environmentMapping:
+    development:
+      - 'dev*'
+      - 'local*'
+      - 'DEV-*'
+    testing:
+      - 'testes'
+      - 'Test'
+      - 'TST-*'
+      - 'sb'
+      - 'sandbox'
+    staging:
+      - 'Pre-Prod'
+      - 'STG-*'
+      - 'stg'
+    production:
+      - 'prod'
+      - 'PROD-*'
