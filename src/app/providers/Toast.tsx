@@ -9,6 +9,7 @@ interface ToastProps extends ToastMessage {
 }
 
 interface ToastContextData {
+
   showToast: ({}: ToastProps) => void;
 }
 
@@ -21,7 +22,7 @@ export const useToast = () => {
   }
   return context;
 };
-
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export const ToastProvider: React.FC<React.PropsWithChildren<{}>> = ({
   children,
 }) => {

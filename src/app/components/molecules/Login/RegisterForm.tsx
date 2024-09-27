@@ -84,7 +84,7 @@ export default function RegisterForm({
         />
         <InputField
           id="email"
-          label="Corporate Email"
+          label="Email"
           type="email"
           error={errors.email?.message}
           registerOptions={{

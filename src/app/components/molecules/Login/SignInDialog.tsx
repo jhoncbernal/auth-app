@@ -8,7 +8,6 @@ import SubmitButton from "@/atoms/Common/SubmitButton";
 import { useForm } from "react-hook-form";
 import FacebookIco from "@/assets/icons/facebook.svg";
 import GoogleIco from "@/assets/icons/google.svg";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useToast } from "@/providers/Toast";

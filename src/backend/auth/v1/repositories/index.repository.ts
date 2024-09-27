@@ -24,7 +24,6 @@ export class IndexRepository implements IRepository {
   ) {}
 
   async createUserByForm(params: IUserForm) {
-    const domain = params.email.split("@")?.[1]?.toLowerCase();
 
     const query = await this.database.adapter.user
       .create({

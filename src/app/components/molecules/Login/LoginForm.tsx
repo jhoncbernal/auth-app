@@ -1,5 +1,5 @@
 // src/molecules/Login/LoginForm.tsx
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
 import { signIn, SignInOptions } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -7,10 +7,7 @@ import { useToast } from "@/providers/Toast";
 import InputField from "@/atoms/Login/InputField";
 import SubmitButton from "@/atoms/Common/SubmitButton";
 import Typography from "@/atoms/Common/Typography";
-import Link from "next/link";
 import Label from "@/atoms/Common/Label";
-import { useSession } from "next-auth/react";
-import LoadingCircle from "@/atoms/Common/LoadingCircle";
 
 // Define your form data interface
 interface LoginFormInputs {
@@ -30,13 +27,7 @@ export default function LoginForm() {
     handleSubmit,
     formState: { errors },
   } = methods;
-  const { data: session, status } = useSession();
 
-  useEffect(() => {
-    if (session?.user.email) {
-      router.push("/dashboard");
-    }
-  }, [router, session?.user.email]);
 
   // Define the type for the handleSubmit handler
   const onSignIn: SubmitHandler<LoginFormInputs> = async (data) => {
@@ -53,10 +44,7 @@ export default function LoginForm() {
   };
 
   return (
-    <section>
-      {status === "loading" ? (
-        <LoadingCircle />
-      ) : (
+    
         <FormProvider {...methods}>
           <form
             onSubmit={handleSubmit(onSignIn)}
@@ -105,7 +93,6 @@ export default function LoginForm() {
             <p className="text-white text-center my-3">- Or -</p>
           </form>
         </FormProvider>
-      )}
-    </section>
+   
   );
 }
