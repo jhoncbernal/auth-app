@@ -49,8 +49,8 @@ Before running this application, make sure you have the following installed:
 ### Cloning the Repository
 
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/jhoncbernal/auth-app
+cd auth-app
 ```
 
 ### Running the Application
