@@ -1,40 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { NEXT_AUTH } from "@/backend/shared/config";
-import { jwtVerify } from "jose";
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
   // Get the path of the request
   const pathname = request.nextUrl.pathname;
-  const method = request.method;
 
-  // If required token, verify it
-  if (
-    (pathname === "/api/map/areas-by-coordinates" && method === "POST") ||
-    (pathname === "/api/map/locations-by-coordinate-group" && method === "POST")
-  ) {
-    try {
-      const token = request.headers.get("Authorization") as string;
-      const decoded = await jwtVerify(
-        token,
-        new TextEncoder().encode(NEXT_AUTH.jwtSecret as string),
-      );
-      // add the decoded token to the request object
-     request.headers.set("decoded", JSON.stringify(decoded));
-      return NextResponse.next();
-    } catch (error:unknown) {
-      return NextResponse.json(
-        {
-          error: `Unauthorized ${error}`,
-        },
-        {
-          status: 401,
-        },
-      );
-    }
+  // Allow unauthenticated access to /login
+  if (pathname === "/login") {
+    return NextResponse.next();
   }
-
-
 
   // Get the session
   const session = await getToken({
@@ -42,31 +17,34 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     secret: NEXT_AUTH.jwtSecret,
   });
 
+  // If no session is found, handle the response
   if (!session) {
-    // If Allowed API route, keep going
+    // Allow some API routes to proceed without a session
     if (
       pathname.includes("/api/socket.io") ||
       pathname.startsWith("/api/auth/") ||
       pathname.startsWith("/api/data-deletion")
-    )
+    ) {
       return NextResponse.next();
+    }
 
-    // If not allowed API route, return unauthorized
-    if (pathname.startsWith("/api/"))
+    // Block access to other API routes
+    if (pathname.startsWith("/api/")) {
       return NextResponse.json(
         {
           message: "Unauthorized",
         },
         {
           status: 401,
-        },
+        }
       );
+    }
+
+    // Redirect non-API requests to login if no session
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // If Allowed Route, keep going
-  if (/^\/api\/report\/[a-zA-Z0-9]+$/.test(pathname))
-    return NextResponse.next();
-
+  // Allow request to proceed if authenticated
   return NextResponse.next();
 }
 
