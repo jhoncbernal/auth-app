@@ -1,0 +1,96 @@
+name: DEPLOY
+run-name: Deploy to [${{ github.event.inputs.env }}] by @${{ github.actor }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: "Deploy in"
+        type: choice
+        default: sb
+        options:
+          - sb
+          - stag
+          - prod
+        required: true
+
+jobs:
+  Build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout the code repository
+        uses: actions/checkout@v3
+      - name: Decode JSON secret and set up deployment credentials
+        shell: bash
+        run: |
+          echo "${{ secrets.DEPLOY }}" | base64 --decode | jq -r 'to_entries | map("echo ::add-mask::\(.value) && echo \(.key)=\(.value) >> $GITHUB_ENV && echo \(.key)=\(.value) >> $GITHUB_ENV")[]' | bash
+      - name: Deploy using chrnorm/deployment-action@v2
+        id: deployment
+        uses: chrnorm/deployment-action@v2
+        with:
+          environment: ${{ github.event.inputs.env }}
+          ref: ${{ github.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get the latest Git tag
+        id: get_tag
+        run: |
+          if [ "${{ github.event.inputs.env }}" = "prod" ]; then
+            GIT_TAG=$(git describe --tags --abbrev=0 || echo "")
+            if [ -z "$GIT_TAG" ]; then
+              BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+              if [[ "$BRANCH_NAME" == *"hotfix"* ]]; then
+                echo "Hotfix branch detected. Allowing deployment to prod."
+              else
+                echo "No Git tag found. Deployment is aborted."
+                exit 1
+              fi
+            fi
+            echo "TAG_VERSION=$GIT_TAG" >> $GITHUB_ENV
+          else
+            echo "Skipping Git tag validation and GITHUB_ENV update for non-prod environment."
+          fi
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ env.host }}
+          username: ${{ env.username }}
+          password: ${{ env.password }}
+          port: ${{ env.port }}
+          command_timeout: 30m
+          script: |
+            cd /home/pelmorex/${{ github.event.inputs.env }}/pelmorex-app
+            git fetch
+            git reset --hard HEAD
+            git checkout ${{ github.ref }}
+            git pull https://${{ env.credentials }}@github.com/pelmorex/pelmorex-app.git ${{ github.ref }}
+            # Update .env file with the Git tag version, replace if it exists
+            if [ "${{ github.event.inputs.env }}" = "prod" ]; then
+              if grep -q "NEXT_PUBLIC_PROJECT_VERSION=" .env; then
+                sed -i "s/NEXT_PUBLIC_PROJECT_VERSION=.*/NEXT_PUBLIC_PROJECT_VERSION=${{ env.TAG_VERSION }}/" .env
+              else
+                echo "NEXT_PUBLIC_PROJECT_VERSION=${{ env.TAG_VERSION }}" >> .env
+              fi
+              echo "Deploying version: ${{ env.TAG_VERSION }}"
+            else
+              echo "Skipping .env update for non-prod environment."
+            fi
+            docker compose build && docker compose up -d && docker builder prune -f && docker image prune -f
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          environment-url: ${{ steps.deployment.outputs.environment_url }}
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          state: "success"
+
+      - name: Update deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          environment-url: ${{ steps.deployment.outputs.environment_url }}
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          state: "failure"
