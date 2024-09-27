@@ -165,7 +165,7 @@ Ctl + c
 
 ### Deployed app
 
-[Pelmorex App Auth](http://77.237.232.197:1234/login)
+[Pelmorex App Auth](https://company-auth-app-deebf01cbbc8.herokuapp.com/login)
 
 
 ## Conclusion
