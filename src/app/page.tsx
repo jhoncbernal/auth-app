@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Login from "./(pages)/login/page";
 
 export const metadata: Metadata = {
   title: "Pelmorex - Welcome",
@@ -7,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return <>welcome</>;
+  return <Login/>;
 }
