@@ -60,11 +60,11 @@ jobs:
           port: ${{ env.port }}
           command_timeout: 30m
           script: |
-            cd /home/pelmorex/${{ github.event.inputs.env }}/pelmorex-app
+            cd /home/auth/${{ github.event.inputs.env }}/auth-app
             git fetch
             git reset --hard HEAD
             git checkout ${{ github.ref }}
-            git pull https://${{ env.credentials }}@github.com/pelmorex/pelmorex-app.git ${{ github.ref }}
+            git pull https://${{ env.credentials }}@github.com/jhoncbernal/auth-app.git ${{ github.ref }}
             # Update .env file with the Git tag version, replace if it exists
             if [ "${{ github.event.inputs.env }}" = "prod" ]; then
               if grep -q "NEXT_PUBLIC_PROJECT_VERSION=" .env; then
