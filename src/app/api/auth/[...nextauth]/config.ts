@@ -55,7 +55,7 @@ export const authOptions: NextAuthOptions = {
       },
 
       async authorize(params) {
-        if (!params) throw { message: "Parámetros incorrectos." };
+        if (!params) throw { message: "Incorrect parameters." };
 
         const {
           status,
@@ -124,12 +124,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account }) {
-      if (account?.provider === "google") {
-        if (user.email?.includes("@gmail.com")) {
-          throw { message: "Por favor, utiliza un email corporativo." };
-        }
-      }
+    async signIn() {
       return true;
     },
     async jwt({ token }) {
@@ -137,7 +132,7 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       const userData = await prisma.user.findUnique({
-        where: { email: session.user.email }
+        where: { email: session.user.email || "" },
       });
 
       if (!userData) throw new Error("User not found");
@@ -145,7 +140,7 @@ export const authOptions: NextAuthOptions = {
       // Assign user data to session
       session.user.id = token.sub as string;
       session.user.phone = userData.phone || "";
-      session.user.emailVerified = userData.emailVerified;
+      session.user.emailVerified = !!userData.emailVerified;
       session.user.permissions = userData.permissions;
 
       return session;
