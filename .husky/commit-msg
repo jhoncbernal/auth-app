@@ -1,0 +1,14 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+commitMessage=$(cat "$1")                                                         # obtain message file content
+validCommitTypes='feat|fix|docs|style|refactor|perf|test|chore|build|ci|revert'   # valid commit types
+validCommitRegex="^([A-Z]+-[0-9]+ )?($validCommitTypes): .*"                      # allow optional Jira ID followed by valid commit type
+
+if [[ $commitMessage =~ $validCommitRegex ]]; then
+  exit 0
+else
+  echo "Commit: ($commitMessage) contains format errors. Accepted format is: <JIRA-ID> <type>: <description>"
+fi
+
+exit 1

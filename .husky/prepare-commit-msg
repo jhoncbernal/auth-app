@@ -1,0 +1,47 @@
+#!/bin/bash
+. "$(dirname "$0")/_/husky.sh"
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+
+teamCode=""
+
+if [[ -z "$COMMIT_SOURCE" || "$COMMIT_SOURCE" == "message" || "$COMMIT_SOURCE" == "merge" ]]; then
+  branchName=$(git rev-parse --abbrev-ref HEAD)
+
+  if [[ $branchName == "HEAD" ]]; then # bypass in rebase
+    echo "Bypass hook for rebase $branchName"
+    exit 0
+  fi
+
+  validBranchRegex="^.*(($teamCode)-[0-9]+).*"
+  validCommitRegex=".*(($teamCode)-[0-9]+).*"
+
+  commitMessage=$(cat "$COMMIT_MSG_FILE") # save original commit message
+
+  if [[ $branchName =~ $validBranchRegex ]]; then
+    issueId="${BASH_REMATCH[1]}" # save regex match (should be Jira's issue id)
+
+    if [[ $commitMessage =~ $validCommitRegex ]]; then
+      # Commit message already contains a task ID
+      commitIssueId="${BASH_REMATCH[1]}"
+      
+      if [[ $commitIssueId != "$issueId" ]]; then
+        # If the task ID in the branch is different, do not prepend the branch task ID
+        echo "$commitMessage" >"$COMMIT_MSG_FILE"
+      fi
+    else
+      # If no task ID in the commit message, prepend the one from the branch
+      echo "$issueId $commitMessage" >"$COMMIT_MSG_FILE"
+    fi
+    exit 0 # exit ok
+  elif [[ $branchName == "HEAD" ]]; then # Rebase default branch
+    echo "$COMMIT_SOURCE on $branchName"
+    exit 0
+  fi
+  echo "Could not match issue Id from your branch name ($branchName) on source: $COMMIT_SOURCE, please check its name"
+  exit 1
+else
+  echo "Invalid commit source: $COMMIT_SOURCE in $COMMIT_MSG_FILE"
+  exit 1
+fi

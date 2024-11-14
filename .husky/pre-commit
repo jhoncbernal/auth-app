@@ -1,0 +1,40 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+localBranchName="$(git rev-parse --abbrev-ref HEAD)"
+
+# If multiple teams work on the same project, add them joined with a |
+teamCode=""
+
+validBranchTypes='feature|hotfix|refactor|chore|release|bug'
+validBranchRegex="($validBranchTypes)\/($teamCode)-[0-9]+-[a-zA-Z0-9]+"
+
+message="There is something wrong with your branch name. Please check that your branch has a valid name and try again."
+
+if [[ ! $localBranchName =~ $validBranchRegex ]]; then
+    echo "$message"
+    echo "Your branch name is: $localBranchName Expected format is: $validBranchRegex"
+    exit 1
+fi
+
+echo "Branch name: $localBranchName follows required format."
+
+# Check for modified files in the src directory
+modifiedFiles=$(git diff --cached --name-only --diff-filter=ACM | grep '^src/' | xargs ls -d 2>/dev/null | xargs)
+
+if [ -z "$modifiedFiles" ]; then
+    echo "No files have been modified. Please make sure you have modified files before you commit."
+else
+    # Check if files need formatting
+        echo "Some files were not properly formatted. Running Prettier to format them..."
+
+        # Format files in place
+        npx prettier $modifiedFiles --write --log-level warn
+
+        # Stage the formatted files to include them in the current commit
+        echo "$modifiedFiles" | xargs git add $modifiedFiles
+
+        echo "Files have been formatted and staged for commit."
+fi
+
+exit 0

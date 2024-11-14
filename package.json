@@ -18,6 +18,7 @@
     "autoprefixer": "^10.4.20",
     "bcrypt": "^5.1.1",
     "dayjs": "^1.11.13",
+    "husky": "^9.1.6",
     "inversify": "^6.0.2",
     "jose": "^5.9.3",
     "lodash": "^4.17.21",
