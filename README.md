@@ -165,7 +165,7 @@ Ctl + c
 
 ### Deployed app
 
-[Pelmorex App Auth](https://company-auth-app-deebf01cbbc8.herokuapp.com/login)
+[App Auth](https://company-auth-app-deebf01cbbc8.herokuapp.com/login)
 
 
 ## Conclusion
@@ -175,8 +175,3 @@ This project has been structured with scalability, security, and ease of use in 
 For future improvements, we can explore adding features like Single Sign-On (SSO), enhanced security measures like rate limiting, and support for localization.
 
 Should you have any questions or require further clarification, please don't hesitate to reach out!
-
-## Images
-![Pelmorex](https://github.com/user-attachments/assets/05a6eae0-6d1b-420c-b2ba-89d9d54876b3)
-
-

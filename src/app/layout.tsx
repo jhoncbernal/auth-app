@@ -9,7 +9,7 @@ import { ToastProvider } from "@/providers/Toast";
 import Script from "next/script";
 
 export const metadata: Metadata = {
-  title: "pelmorex - å",
+  title: "auth app",
   description:
     " We are Weather and Information Networks; From dominating the Canadian weather information space, to breaking new ground in data solutions.",
   keywords:

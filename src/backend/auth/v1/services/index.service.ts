@@ -53,12 +53,12 @@ export class IndexService implements IService {
   async sendVerificationRequest(params: IVerification) {
     const templateDictionary = {
       verifyEmail: {
-        title: "Pelmorex - Confirm email",
+        title: "Auth - Confirm email",
         template: SENDGRID.TEMPLATES.WELCOME.ID,
         path: "/api/auth/email/verify",
       },
       recoverPassword: {
-        title: "Pelmorex - Recover Password",
+        title: "Auth - Recover Password",
         template: "d-dd78ae8503e049eca75039138819552a",
         path: "/api/auth/email/recover",
       },
